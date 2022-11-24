@@ -1,0 +1,15 @@
+package com.shopping.users;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class JwtTokenProviderTest {
+	
+	@Test
+	void test_generateToken()
+	{
+		
+	}
+
+}

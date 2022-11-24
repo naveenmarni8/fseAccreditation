@@ -1,0 +1,8 @@
+package com.shopping.users;
+
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class UsernamePwdAuthenticationProviderTest {
+
+}

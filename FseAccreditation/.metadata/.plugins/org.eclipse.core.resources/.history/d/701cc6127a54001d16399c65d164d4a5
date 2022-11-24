@@ -1,0 +1,21 @@
+package com.shopping.app.exception;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.time.LocalDateTime;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+ class ExceptionDataTests {
+	
+	@Test
+	void test_ExceptionLoadedorNot()
+	{
+		LocalDateTime localDateTime=LocalDateTime.now();
+		ExceptionData exceptionData=new ExceptionData("message",localDateTime,new CustomException());
+		assertEquals("message",exceptionData.getMessage());
+	}
+
+}

@@ -1,0 +1,18 @@
+package com.shopping.app.dto;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.shopping.app.model.Product;
+
+@SpringBootTest
+public class ProductDtoTests {
+	@Test
+	void test_ProductDtoLoadedOrNot()
+	{
+		ProductDto productDto=new ProductDto();
+		assertTrue(productDto!=null);
+	}
+}

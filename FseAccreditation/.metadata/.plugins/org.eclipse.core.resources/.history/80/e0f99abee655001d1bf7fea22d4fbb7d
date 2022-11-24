@@ -1,0 +1,66 @@
+package com.shopping.orders.controller;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shopping.orders.dto.ProductDto;
+import com.shopping.orders.model.OrderModel;
+import com.shopping.orders.service.OrdersService;
+
+@WebMvcTest
+class OrdersControllerTest {
+	@Autowired
+	private MockMvc mockMvc;
+	@Autowired
+	private OrdersService ordersService;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
+	
+	private ProductDto productDto,productDto2;
+	
+	private List<ProductDto> productDtoList;
+	
+	@BeforeEach
+	void init()
+	{
+		
+		productDto=ProductDto.builder()
+				.id("123")
+				.productName("Realme GT Master Edition")
+				.qty(10)
+				.build();
+		
+		productDto2=ProductDto.builder()
+				.id("356")
+				.productName("Poco X2")
+				.qty(10)
+				.build();
+			
+		          
+	}
+	
+	@Test
+	@WithMockUser(authorities = {"USER"})
+	void test_createOrder()
+	{
+		ResultActions response=mockMvc.perform(post("")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString())
+				.with(csrf()));
+				                      
+	}
+}

@@ -1,0 +1,63 @@
+package com.shopping.users;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Component;
+
+import com.shopping.users.filter.SecurityConstants;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+@Component
+public class JwtTokenProvider {
+	
+	   
+	    @Value("${app.jwt-expiration-milliseconds}")
+	    private int jwtExpirationInMs;
+	    
+	public String generateToken(Authentication authentication){
+    String username = authentication.getName();
+    Date currentDate = new Date();
+    Date expireDate = new Date(currentDate.getTime() + jwtExpirationInMs);
+
+    SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
+    
+    String token = Jwts.builder().setIssuer("Online Shopping").setSubject("JWT Token")
+            .claim("username", authentication.getName())
+            .claim("authorities", populateAuthorities(authentication.getAuthorities()))
+            .setIssuedAt(new Date())
+            .setExpiration(new Date((new Date()).getTime() + 30000000))
+            .signWith(key).compact();
+    return token;
+}
+
+// get username from the token
+public String getUsernameFromJWT(String token){
+    Claims claims = Jwts.parser()
+            .setSigningKey(SecurityConstants.JWT_KEY)
+            .parseClaimsJws(token)
+            .getBody();
+    return claims.getSubject();
+}
+
+private String populateAuthorities(Collection<? extends GrantedAuthority> collection) {
+    Set<String> authoritiesSet = new HashSet<>();
+    for (GrantedAuthority authority : collection) {
+        authoritiesSet.add(authority.getAuthority());
+    }
+    return String.join(",", authoritiesSet);
+}
+
+}

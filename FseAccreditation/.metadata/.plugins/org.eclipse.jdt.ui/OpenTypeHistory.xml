@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<typeInfoHistroy>
+    <typeInfo handle="=orders-service/C:\/Users\/saina\/.p2\/pool\/plugins\/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.2.v20220201-1208\/jre\/lib\/jrt-fs.jar`java.base=/maven.pomderived=/true=/&lt;java.lang(RuntimeException.class[RuntimeException" modifiers="33" timestamp="1643697666000"/>
+    <typeInfo handle="=user-service/C:\/Users\/saina\/.m2\/repository\/org\/springframework\/security\/spring-security-config\/5.7.3\/spring-security-config-5.7.3.jar=/maven.pomderived=/true=/=/maven.pomderived=/true=/=/maven.groupId=/org.springframework.security=/=/maven.artifactId=/spring-security-config=/=/maven.version=/5.7.3=/=/maven.scope=/compile=/&lt;org.springframework.security.config.annotation.web.configuration(WebSecurityConfigurerAdapter.class[WebSecurityConfigurerAdapter" modifiers="1049601" timestamp="1666241334388"/>
+    <typeInfo handle="=user-service/C:\/Users\/saina\/.m2\/repository\/org\/springframework\/spring-web\/5.3.23\/spring-web-5.3.23.jar=/maven.pomderived=/true=/=/maven.pomderived=/true=/=/maven.groupId=/org.springframework=/=/maven.artifactId=/spring-web=/=/maven.version=/5.3.23=/=/maven.scope=/compile=/&lt;org.springframework.web.filter(OncePerRequestFilter.class[OncePerRequestFilter" modifiers="1057" timestamp="1665483936213"/>
+</typeInfoHistroy>

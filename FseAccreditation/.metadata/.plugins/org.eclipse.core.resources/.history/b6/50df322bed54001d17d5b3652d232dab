@@ -1,0 +1,46 @@
+package com.shopping.users.service;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.shopping.users.model.UsersModel;
+import com.shopping.users.repository.UsersRepository;
+
+@ExtendWith(MockitoExtension.class)
+class UserServiceTests {
+@Mock
+private UsersRepository usersRepository;
+@InjectMocks
+private UsersService usersService;
+
+private UsersModel usersModel;
+@BeforeEach
+public void init()
+{
+	usersModel=UsersModel.builder()
+			   .email("user.in@gmail.com")
+			   .firstName("User")
+	           .lastName("Indian")
+	           .loginId("USER")
+	           .password("1234")
+	           .role("USER")
+	           .build();
+	           
+}
+
+@Test
+void test_addUserService()
+{
+	when(usersRepository.findByEmail(usersModel.getEmail())).thenReturn(null);
+	when(usersRepository.save(UsersModel))
+	assertNotNull(usersService.addUserService(usersModel));
+}
+
+}

@@ -1,0 +1,5 @@
+package com.shopping.users.model;
+
+public class JWTAuthResponse {
+
+}

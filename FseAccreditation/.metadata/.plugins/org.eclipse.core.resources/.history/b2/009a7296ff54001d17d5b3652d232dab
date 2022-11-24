@@ -1,0 +1,74 @@
+package com.shopping.users.service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.shopping.users.exception.CustomException;
+import com.shopping.users.model.UsersModel;
+import com.shopping.users.repository.UsersRepository;
+
+@ExtendWith(MockitoExtension.class)
+class UserServiceTests {
+@Mock
+private UsersRepository usersRepository;
+@InjectMocks
+private UsersService usersService;
+
+private UsersModel usersModel;
+@BeforeEach
+public void init()
+{
+	usersModel=UsersModel.builder()
+			   .email("user.in@gmail.com")
+			   .firstName("User")
+	           .lastName("Indian")
+	           .loginId("USER")
+	           .password("1234")
+	           .role("USER")
+	           .build();
+	           
+}
+
+@Test
+void test_addUserService()
+{
+	when(usersRepository.findByEmail(usersModel.getEmail())).thenReturn(Collections.emptyList());
+	when(usersRepository.save(usersModel)).thenReturn(usersModel);
+	assertNotNull(usersService.addUserService(usersModel));
+}
+
+@Test
+void test_findUserService_thenThrowsException()
+{
+	when(usersRepository.findByEmail(usersModel.getEmail())).thenReturn(Collections.emptyList());
+	assertThrows(Exception.class,()->{
+		usersService.findUserService(usersModel.getEmail());
+	});
+}
+
+@Test
+void test_findUserService()
+{
+	when(usersRepository.findByEmail(usersModel.getEmail())).thenReturn(Stream.of(usersModel).toList());
+	assertEquals(usersModel.getPassword(),usersService.findUserService(usersModel.getEmail()));
+}
+@Test
+void test_getByEmail_withValidEmailId()
+{
+	when(usersRepository.findByEmail(usersModel.getEmail())).thenReturn(Stream.of(usersModel).toList());
+	assertNotNull(usersService.getByEmail(usersModel.getEmail()));
+}
+
+}

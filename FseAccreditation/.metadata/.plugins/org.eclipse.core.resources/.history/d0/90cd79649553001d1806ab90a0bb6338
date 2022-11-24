@@ -1,0 +1,40 @@
+package com.shopping.app.repository;
+
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import com.shopping.app.model.Product;
+
+@DataJpaTest
+public class ProductRepositoryTests {
+	
+	@Autowired
+	private ProductRepository productRepository;
+	
+	private Product product;
+	
+	@BeforeEach
+	void init()
+	{
+	product=Product.builder()
+			.id("123")
+			.productName("")
+			.productDescription("")
+			.productStatus("Available")
+			.qty(10)
+			.price(16999)
+			.features(Stream.of("a","b").toList())
+			.build();
+			
+			
+	}
+	
+	void test_saveMethod()
+	{
+		
+	}
+
+}

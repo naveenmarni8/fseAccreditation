@@ -1,0 +1,85 @@
+package com.shopping.users;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.shopping.users.model.AuthenticationRequest;
+import com.shopping.users.model.UsersModel;
+import com.shopping.users.repository.UsersRepository;
+
+@ExtendWith(MockitoExtension.class)
+class UsernamePwdAuthenticationProviderTest {
+	
+	@Mock
+	private UsersRepository usersRepository;
+	
+	@Mock
+	private PasswordEncoder passwordEncoder;
+	
+	@InjectMocks
+	private UsernamePwdAuthenticationProvider usernamePwdAuthenticationProvider;
+	
+	private UsersModel usersModel;
+	@BeforeEach
+	public void init()
+	{
+		usersModel=UsersModel.builder()
+				   .email("user.in@gmail.com")
+				   .firstName("User")
+		           .lastName("Indian")
+		           .loginId("USER")
+		           .password("1234")
+		           .role("USER")
+		           .build();
+		           
+	}
+	
+	@Test
+	void test_authenticate_WithValidpassword()
+	{
+		AuthenticationRequest authRequest=new AuthenticationRequest("user.in@gmail.com","1234");
+		when(usersRepository.findByEmail(usersModel.getEmail())).thenReturn(Stream.of(usersModel).toList());
+		when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(true);
+		assertNotNull(usernamePwdAuthenticationProvider.authenticate(authRequest));
+	}
+	
+	@Test
+	void test_authenticate_WithInValidpassword()
+	{
+		AuthenticationRequest authRequest=new AuthenticationRequest("user.in@gmail.com","password");
+		when(usersRepository.findByEmail(usersModel.getEmail())).thenReturn(Stream.of(usersModel).toList());
+		when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(false);
+		assertThrows(BadCredentialsException.class,()->{
+			usernamePwdAuthenticationProvider.authenticate(authRequest);
+		});
+	}
+	
+	@Test
+	void test_authenticate_WithInValidusername()
+	{
+		AuthenticationRequest authRequest=new AuthenticationRequest("hello.in@gmail.com","password");
+		when(usersRepository.findByEmail("hello.in@gmail.com")).thenReturn(null);
+		when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(false);
+		assertThrows(BadCredentialsException.class,()->{
+			usernamePwdAuthenticationProvider.authenticate(authRequest);
+		});
+	}
+
+}

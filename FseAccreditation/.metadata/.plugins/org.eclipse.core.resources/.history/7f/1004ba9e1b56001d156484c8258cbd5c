@@ -1,0 +1,72 @@
+package com.shopping.orders;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
+
+import com.shopping.orders.dto.ProductDto;
+import com.shopping.orders.dto.ProductDtoList;
+import com.shopping.orders.repository.OrderModelRepository;
+import com.shopping.orders.service.OrdersService;
+
+@SpringBootTest
+@DirtiesContext
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
+class EmbeddedIntegrationTest {
+
+	private ProductDto productDto, productDto2;
+
+	private ProductDtoList productDtoList;
+	
+	@Mock
+	private OrderModelRepository orderModelRepository;
+	
+	@Mock
+	private KafkaTemplate<String,Object> kafkaTemplate;
+
+	@BeforeEach
+	void init() {
+
+		productDto = ProductDto.builder().id("123").productName("Realme GT Master Edition").qty(10).build();
+
+		productDto2 = ProductDto.builder().id("356").productName("Poco X2").qty(10).build();
+
+		productDtoList =new ProductDtoList("U123",Stream.of(productDto, productDto2).toList());
+
+	}
+
+	@InjectMocks
+	private OrdersService ordersService;
+
+	@Test
+	void givenEmbeddedKafkaBroker_whenSendingWithSimpleProducer_thenMessageReceived() throws InterruptedException {
+		
+		
+		//ArgumentCaptor<ProductDtoList> captor = ArgumentCaptor.forClass(ProductDtoList.class);
+		ordersService.sendOrderData(productDtoList);
+		
+		boolean messageConsumed =ordersService.getCountDownLatch().await(20, TimeUnit.SECONDS);
+		assertTrue(messageConsumed);
+		assertNotNull(ordersService.getPayload());
+		
+
+	}
+
+}

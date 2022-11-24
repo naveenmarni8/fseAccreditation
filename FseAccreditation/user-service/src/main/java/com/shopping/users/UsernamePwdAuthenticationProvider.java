@@ -1,0 +1,65 @@
+package com.shopping.users;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import com.shopping.users.model.AuthenticationRequest;
+import com.shopping.users.model.UsersModel;
+import com.shopping.users.repository.UsersRepository;
+
+@Component
+public class UsernamePwdAuthenticationProvider {
+
+	
+	private UsersRepository usersRepository;
+	private PasswordEncoder passwordEncoder;
+     
+	@Autowired
+	public UsernamePwdAuthenticationProvider(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
+		super();
+		this.usersRepository = usersRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
+
+	//@Override
+	public Authentication authenticate(AuthenticationRequest authentication) throws AuthenticationException {
+		String username = authentication.getUsername();
+		String pwd = authentication.getPassword();
+		List<UsersModel> usersList=usersRepository.findByEmail(username);
+		//Optional<UsersModel> usersModel=usersList!=null?Optional.of(usersList.get(0)):Optional.empty();
+		List<GrantedAuthority> grantedAuthority=new ArrayList<>();
+		if(!usersList.isEmpty())
+		{
+			UsersModel usersModel=usersList.get(0);
+			grantedAuthority.add(new SimpleGrantedAuthority(usersModel.getRole()));
+			if(passwordEncoder.matches(pwd, usersModel.getPassword()))
+			{
+				return new UsernamePasswordAuthenticationToken(username, pwd, grantedAuthority);
+			}
+			else {
+                throw new BadCredentialsException("Invalid password!");
+            }
+        }
+		else {
+            throw new BadCredentialsException("No user registered with this details!");
+        }
+	}
+	
+	
+
+
+	
+
+}

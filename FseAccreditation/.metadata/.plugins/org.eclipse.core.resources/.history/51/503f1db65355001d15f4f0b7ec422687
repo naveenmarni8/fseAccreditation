@@ -1,0 +1,23 @@
+package com.shopping.users;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import io.jsonwebtoken.Jwts;
+
+@SpringBootTest
+class JwtTokenProviderTest {
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
+	private Jwts jwts;
+	@Test
+	void test_generateToken()
+	{
+		assertNull(jwtTokenProvider.generateToken(null));
+	}
+
+}

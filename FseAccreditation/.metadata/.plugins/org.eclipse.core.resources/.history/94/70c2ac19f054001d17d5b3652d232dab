@@ -1,0 +1,58 @@
+package com.shopping.users.controller;
+
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shopping.users.model.UsersModel;
+import com.shopping.users.service.UsersService;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest
+class UsersControllerTests {
+	@Autowired
+	private MockMvc mockMvc;
+	
+	@MockBean
+	private UsersService usersService;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
+	
+	private UsersModel usersModel;
+	@BeforeEach
+	public void init()
+	{
+		usersModel=UsersModel.builder()
+				   .email("user.in@gmail.com")
+				   .firstName("User")
+		           .lastName("Indian")
+		           .loginId("USER")
+		           .password("1234")
+		           .role("USER")
+		           .build();
+		           
+	}
+	@Test
+	void test_createUser() throws JsonProcessingException, Exception
+	{
+		when(usersService.addUserService(usersModel)).thenReturn(usersModel);
+		ResultActions response=mockMvc.perform(post("/api/v1.0/shopping/register")
+				                      .contentType(MediaType.APPLICATION_JSON)
+				                      .content(objectMapper.writeValueAsString(usersModel))
+				                      .with(csrf()));
+	}
+}

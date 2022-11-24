@@ -1,0 +1,5 @@
+package com.shopping.orders.client;
+
+public class ProductClientTest {
+
+}

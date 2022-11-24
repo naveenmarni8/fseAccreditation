@@ -1,0 +1,75 @@
+package com.shopping.app.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+
+
+import com.shopping.app.exception.CustomException;
+import com.shopping.app.model.Product;
+import com.shopping.app.repository.ProductRepository;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+public class ProductService {
+	@Autowired
+	private ProductRepository productRepository;
+
+	public Product addProductService(Product product) {
+		if(productRepository.findByProductName(product.getProductName())==null)
+		return productRepository.save(product);
+		
+		throw new CustomException("Product is already present!!");
+	}
+
+	public Product updateProductService(String id) throws CustomException {
+		Optional<Product> updateProduct = productRepository.findById(id);
+		if (updateProduct.isPresent()) {
+			updateProduct.get().setProductStatus("Not Available");
+			return productRepository.save(updateProduct.get());
+		}
+		throw new CustomException("Product was not found,try again.");
+	}
+
+	public Product getProductService(String productName) throws CustomException {
+		Optional<Product> product = Optional.ofNullable(productRepository.findByProductName(productName));
+		if (product.isEmpty()) {
+			throw new CustomException("Invalid Product name!!");
+		}
+		return product.get();
+	}
+
+	public String deleteProductService(String id) throws CustomException {
+		if (productRepository.findById(id).isPresent()) {
+			productRepository.deleteById(id);
+			return "Product Deleted!!!";
+		}
+		throw new CustomException("Product is not found, deletion failed!!");
+	}
+
+	public List<Product> getAllProductsService() throws CustomException {
+		List<Product> productList=productRepository.findAll();
+		if (productList.isEmpty()) {
+			throw new CustomException("No products are there in the db.");
+		}
+		return productRepository.findAll();
+	}
+
+	public boolean verifyProductService(String productId, int productQty) {
+		Optional<Product> product = productRepository.findById(productId);
+		if (product.isPresent()) {
+			int qty = product.get().getQty();
+			if (qty - productQty > 0) {
+				product.get().setQty(qty - productQty);
+				productRepository.save(product.get());
+				return true;
+			}
+		}
+		return false;
+	}
+
+}

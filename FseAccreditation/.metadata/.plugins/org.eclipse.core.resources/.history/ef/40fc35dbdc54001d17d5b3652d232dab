@@ -1,0 +1,48 @@
+package com.shopping.users.repository;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.shopping.users.model.UsersModel;
+
+import lombok.extern.slf4j.Slf4j;
+
+@SpringBootTest
+@Slf4j
+class UsersRepositoryTests {
+@Autowired
+private UsersRepository usersRepository;
+private UsersModel usersModel;
+@BeforeEach
+public void init()
+{
+	usersModel=UsersModel.builder()
+			   .email("user.in@gmail.com")
+			   .firstName("User")
+	           .lastName("Indian")
+	           .loginId("USER")
+	           .password("1234")
+	           .role("USER")
+	           .build();
+	           
+}
+
+@Test
+void test_SaveUser()
+{
+	assertNotNull(usersRepository.save(usersModel));
+}
+@Test
+void test_findByEmail()
+{
+	//usersRepository.save(usersModel);
+	log.info(usersRepository.findByEmail(usersModel.getEmail()).toString());
+	assertTrue(true);
+	//assertNotNull(usersRepository.findByEmail(usersModel.getEmail()));
+}
+}

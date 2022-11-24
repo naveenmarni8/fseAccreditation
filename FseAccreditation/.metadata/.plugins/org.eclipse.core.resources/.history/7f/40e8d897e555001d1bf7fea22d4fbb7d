@@ -1,0 +1,5 @@
+package com.shopping.orders.controller;
+
+class OrdersControllerTest {
+
+}

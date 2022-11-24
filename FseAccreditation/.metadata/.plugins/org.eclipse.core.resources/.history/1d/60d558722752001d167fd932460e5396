@@ -1,0 +1,11 @@
+package com.shopping.users.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class JWTAuthResponse {
+	private String accessToken;
+    private String tokenType = "Bearer";
+}

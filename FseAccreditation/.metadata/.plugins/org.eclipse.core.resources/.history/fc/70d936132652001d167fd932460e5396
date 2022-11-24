@@ -1,0 +1,67 @@
+package com.shopping.users.controller;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.shopping.users.UsernamePwdAuthenticationProvider;
+import com.shopping.users.dto.UserModelDto;
+import com.shopping.users.exception.CustomException;
+import com.shopping.users.model.AuthenticationRequest;
+import com.shopping.users.model.UsersModel;
+import com.shopping.users.service.UsersService;
+
+@RestController
+@RequestMapping("/api/v1.0/shopping")
+public class UsersController {
+	
+	private UsersService usersService;
+	private PasswordEncoder passwordEncoder;
+	private UsernamePwdAuthenticationProvider usernamePwdAuthenticationProvider;
+	
+	@Autowired
+	public UsersController(UsersService usersService, PasswordEncoder passwordEncoder) {
+		this.usersService = usersService;
+		this.passwordEncoder = passwordEncoder;
+	}
+	@PostMapping("/register")
+	public String createUser(@RequestBody UserModelDto userDto) throws CustomException
+	{
+		String hashedPassword=passwordEncoder.encode(userDto.getPassword());
+		UsersModel user=new UsersModel();
+		user.setLoginId(userDto.getLoginId());
+		user.setEmail(userDto.getEmail());
+		user.setFirstName(userDto.getFirstName());
+		user.setLastName(userDto.getLastName());
+		user.setRole(userDto.getRole());
+		user.setPassword(hashedPassword);
+		Optional<UsersModel> res=Optional.ofNullable(usersService.addUserService(user));
+		if(res.isEmpty())
+		{
+		throw new CustomException("Email already exists!!");
+		}
+		
+		return res.toString();
+	}
+	@PostMapping("/login")
+	public void loginUser(@RequestBody AuthenticationRequest authRequest)
+	{
+		Authentication authentication=usernamePwdAuthenticationProvider.authenticate(authRequest);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+	}
+	@GetMapping("/{email}/forgot")
+	public String forgotPassword(@PathVariable String email)
+	{
+		return usersService.findUserService(email);
+	}
+
+}

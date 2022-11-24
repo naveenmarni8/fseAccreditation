@@ -1,0 +1,38 @@
+package com.shopping.app.dto;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.Test;
+
+
+public class ProductRequestDtoTests {
+	@Test
+	void test_ProductLoadedOrNot()
+	{
+		ProductRequestDto product=new ProductRequestDto();
+		assertNotNull(product!=null);
+	}
+	
+	@Test
+	void test_ProductRequestDto()
+	{
+		ProductRequestDto productRequestDto=ProductRequestDto.builder()
+				.id("123")
+				.productName("Realme GT Master Edition")
+				.productDescription("realme GT Master Edition in India is equipped with Snapdragon 778G 5G Processor | 120Hz Super AMOLED Display")
+				.productStatus("Available")
+				.qty(10)
+				.price(26999)
+				.features(Stream.of("8 GB RAM | 128 GB ROM","Qualcomm Snapdragon 778G Processor").toList())
+				.build();
+		assertEquals("123",productRequestDto.getId());
+		assertEquals("Realme GT Master Edition",productRequestDto.getProductName());
+		assertEquals("realme GT Master Edition in India is equipped with Snapdragon 778G 5G Processor | 120Hz Super AMOLED Display",productRequestDto.getProductDescription());
+		assertEquals("Available",productRequestDto.getProductStatus());
+		assertEquals(10,productRequestDto.getQty());
+		assertEquals(2,productRequestDto.getFeatures().size());
+	}
+}

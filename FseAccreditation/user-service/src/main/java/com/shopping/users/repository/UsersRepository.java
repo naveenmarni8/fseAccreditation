@@ -1,0 +1,19 @@
+package com.shopping.users.repository;
+
+
+
+import java.util.List;
+
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import com.shopping.users.model.UsersModel;
+
+@Repository
+public interface UsersRepository extends MongoRepository<UsersModel,String> {
+	
+	@Query(value="{'email' : ?0}")
+	List<UsersModel> findByEmail(String email);
+
+}

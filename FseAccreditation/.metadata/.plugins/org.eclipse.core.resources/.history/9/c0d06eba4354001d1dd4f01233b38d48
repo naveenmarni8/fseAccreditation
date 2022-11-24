@@ -1,0 +1,16 @@
+package com.shopping.app.model;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+public class ProductTests {
+	
+	@Test
+	void test_ProductLoadedOrNot()
+	{
+		Product product=new Product();
+		assertTrue(product!=null);
+	}
+
+}

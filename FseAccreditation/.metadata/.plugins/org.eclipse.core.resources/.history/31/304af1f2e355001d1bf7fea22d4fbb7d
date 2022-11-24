@@ -1,0 +1,30 @@
+package com.shopping.orders.repository;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.shopping.orders.model.OrderModel;
+
+@SpringBootTest
+class OrderModelRepositoryTests {
+	@Autowired
+	private OrderModelRepository orderModelRepository;
+	private OrderModel orderModel;
+	@BeforeEach
+	void init()
+	{
+		orderModel=OrderModel.builder()
+				  .id("345")
+				  .orderId("#123895")
+		          .productDtoList(null)
+		          .build();
+		          
+	}
+	@Test
+	void test_SaveOrderData()
+	{
+		
+	}
+}

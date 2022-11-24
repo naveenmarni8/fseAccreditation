@@ -1,0 +1,5 @@
+package com.shopping.orders.dto;
+
+public class ProductDtoList {
+
+}

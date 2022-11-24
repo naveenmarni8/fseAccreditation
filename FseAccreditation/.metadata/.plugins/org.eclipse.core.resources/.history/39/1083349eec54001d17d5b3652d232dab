@@ -1,0 +1,17 @@
+package com.shopping.users.service;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.shopping.users.repository.UsersRepository;
+
+@ExtendWith(MockitoExtension.class)
+class UserServiceTests {
+@Mock
+private UsersRepository usersRepository;
+@InjectMocks
+private UsersService usersService;
+
+}

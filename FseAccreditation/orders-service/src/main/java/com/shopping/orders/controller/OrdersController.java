@@ -1,0 +1,52 @@
+package com.shopping.orders.controller;
+
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.shopping.orders.client.ProductClient;
+import com.shopping.orders.dto.ProductDto;
+import com.shopping.orders.dto.ProductDtoList;
+import com.shopping.orders.exception.CustomException;
+import com.shopping.orders.service.OrdersService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@RestController
+@RequestMapping("/api/v1.0/shopping")
+@Slf4j
+public class OrdersController {
+	@Autowired
+	private OrdersService ordersService;
+	@Autowired
+	private ProductClient productClient;
+	@PostMapping("/order")
+	@PreAuthorize("hasAuthority('USER')")
+	public String createOrder(@RequestBody ProductDtoList productDtoList) throws CustomException
+	{
+		boolean productQtyAvailable=false;
+		for(ProductDto productDto:productDtoList.getProductDtoList())
+		{
+			productQtyAvailable=productClient.checkProduct(productDto.getId(),productDto.getQty());
+			log.info("boolean answer is: "+productQtyAvailable);
+			if(!productQtyAvailable)
+			{
+			break;
+			}
+		}
+		if(productQtyAvailable)
+		{
+			ordersService.sendOrderData(productDtoList);
+			return "Order placed successfully!!";
+		}
+		throw new CustomException("Order not created!!");
+		
+	}
+
+}

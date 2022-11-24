@@ -1,0 +1,136 @@
+package com.shopping.app.controller;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shopping.app.model.Product;
+import com.shopping.app.service.ProductService;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest
+public class AppControllerTests {
+	
+	@Autowired
+	private MockMvc mockMvc;
+	@MockBean
+	private ProductService productService;
+	private Product product,product2;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
+	
+	@BeforeEach
+	void init()
+	{
+	product=Product.builder()
+			.id("123")
+			.productName("Realme GT Master Edition")
+			.productDescription("realme GT Master Edition in India is equipped with Snapdragon 778G 5G Processor | 120Hz Super AMOLED Display")
+			.productStatus("Available")
+			.qty(10)
+			.price(26999)
+			.features(Stream.of("8 GB RAM | 128 GB ROM","Qualcomm Snapdragon 778G Processor").toList())
+			.build();
+	
+	product2=Product.builder()
+			.id("126")
+			.productName("Poco X2")
+			.productDescription("Poco X2 in India is equipped with Snapdragon 778G 5G Processor | 120Hz Super AMOLED Display")
+			.productStatus("Available")
+			.qty(10)
+			.price(16999)
+			.features(Stream.of("6 GB RAM | 128 GB ROM","Qualcomm Snapdragon 778G Processor").toList())
+			.build();
+	
+	}
+	
+	@Test
+	@WithMockUser(authorities = {"USER"})
+	void test_viewAllProducts() throws Exception
+	{
+		List<Product> productsList=Stream.of(product,product2).toList();
+		when(productService.getAllProductsService()).thenReturn(productsList);
+		
+		ResultActions response=mockMvc.perform(get("/api/v1.0/shopping/all"));
+		
+		response.andExpect(status().isOk())
+		.andDo(print())
+		.andExpect(jsonPath("$.size()",is(productsList.size())));
+		
+	}
+	
+	@Test
+	@WithMockUser(authorities = {"USER"})
+	void test_getProduct() throws Exception
+	{
+		when(productService.getProductService(product.getProductName())).thenReturn(product);
+		
+		ResultActions response=mockMvc.perform(get("/api/v1.0/shopping/products/search/{productName}",product.getProductName()));
+		
+		response.andExpect(status().isOk())
+        .andDo(print())
+        .andExpect(jsonPath("$.productName",is(product.getProductName())))
+        .andExpect(jsonPath("$.productDescription",is(product.getProductDescription())))
+        .andExpect(jsonPath("$.price",is(product.getPrice())))
+        .andExpect(jsonPath("$.features",is(product.getFeatures())))
+        .andExpect(jsonPath("$.productStatus",is(product.getProductStatus())))
+        .andExpect(jsonPath("$.qty",is(product.getQty())));
+				                      
+	}
+	/*@Test
+	@WithMockUser(authorities = {"ADMIN"})
+	void test_addProduct() throws Exception
+	{
+		
+		
+		ResultActions response=mockMvc.perform(post("/api/v1.0/shopping/add")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(product)));
+		
+		response
+		.andExpect(status().isOk())
+		.andDo(print())
+		.andExpect(jsonPath("$.productName",is(product.getProductName())))
+        .andExpect(jsonPath("$.productDescription",is(product.getProductDescription())))
+        .andExpect(jsonPath("$.price",is(product.getPrice())))
+        .andExpect(jsonPath("$.features",is(product.getFeatures())))
+        .andExpect(jsonPath("$.productStatus",is(product.getProductStatus())))
+        .andExpect(jsonPath("$.qty",is(product.getQty())));
+				
+		
+	}*/
+	@Test
+	@WithMockUser(authorities = {"ADMIN"})
+	void test_updateProductStatus() throws Exception
+	{
+		when(productService.updateProductService(product.getId())).thenReturn(product);
+		ResultActions response=mockMvc.perform(put("/api/v1.0/shopping/update/{id}",product.getId()));
+		
+		response.andExpect(status().isOk())
+        .andDo(print())
+        .andExpect(jsonPath("$.productName",is(product.getProductName())))
+        .andExpect(jsonPath("$.productDescription",is(product.getProductDescription())))
+        .andExpect(jsonPath("$.price",is(product.getPrice())))
+        .andExpect(jsonPath("$.features",is(product.getFeatures())))
+        .andExpect(jsonPath("$.productStatus",is(product.getProductStatus())))
+        .andExpect(jsonPath("$.qty",is(product.getQty())));
+	}
+
+}

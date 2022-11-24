@@ -1,0 +1,6 @@
+spring.data.mongodb.uri=mongodb+srv://root:root@online-shopping.i3vdjcs.mongodb.net/?retryWrites=true&w=majority
+spring.data.mongodb.database=mydb
+
+
+app.jwt-secret= jxgEQeXHuPq8VdbyYFNkANdudQ53YUn4
+app.jwt-expiration-milliseconds = 604800000 

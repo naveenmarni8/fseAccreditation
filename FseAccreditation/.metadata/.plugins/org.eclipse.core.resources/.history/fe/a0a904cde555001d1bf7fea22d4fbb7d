@@ -1,0 +1,15 @@
+package com.shopping.orders.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.shopping.orders.service.OrdersService;
+
+@WebMvcTest
+class OrdersControllerTest {
+	@Autowired
+	private MockMvc mockMvc;
+	@Autowired
+	private OrdersService ordersService;
+}

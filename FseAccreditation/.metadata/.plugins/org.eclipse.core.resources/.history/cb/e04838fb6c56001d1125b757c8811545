@@ -1,0 +1,6 @@
+package com.shopping.orders.client;
+
+@SpringBooTest
+class ProductClientTest {
+
+}

@@ -1,0 +1,51 @@
+package com.shopping.users;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import com.shopping.users.filter.JwtTokenGenerationFilter;
+import com.shopping.users.filter.JwtTokenValidationFilter;
+
+@Configuration
+//@EnableWebSecurity
+public class SecurityConfig {
+	
+	@Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+		httpSecurity.csrf().disable()
+		.authorizeRequests()
+		.antMatchers("/api/v1.0/shopping/login","/api/v1.0/shopping/register").permitAll()
+		.antMatchers("/h2-console/**").permitAll()
+		.antMatchers("/login").authenticated().and()
+		.sessionManagement(
+				session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		.addFilterAfter(new JwtTokenGenerationFilter(), BasicAuthenticationFilter.class)
+		.addFilterBefore(new JwtTokenValidationFilter(), BasicAuthenticationFilter.class)
+		.formLogin().and()
+		.httpBasic(withDefaults());
+        
+//httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+            
+        return httpSecurity.build();
+    }
+	
+	@Bean
+	public PasswordEncoder bCryptPasswordEncoder()
+	{
+		return new BCryptPasswordEncoder();
+	}
+	
+	 
+
+}

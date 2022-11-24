@@ -1,0 +1,42 @@
+package com.shopping.users.controller;
+
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.shopping.users.model.UsersModel;
+import com.shopping.users.service.UsersService;
+
+@WebMvcTest
+class UsersControllerTests {
+	@Autowired
+	private MockMvc mockMvc;
+	
+	@MockBean
+	private UsersService usersService;
+	
+	private UsersModel usersModel;
+	@BeforeEach
+	public void init()
+	{
+		usersModel=UsersModel.builder()
+				   .email("user.in@gmail.com")
+				   .firstName("User")
+		           .lastName("Indian")
+		           .loginId("USER")
+		           .password("1234")
+		           .role("USER")
+		           .build();
+		           
+	}
+	@Test
+	void test_createUser()
+	{
+		when(usersService.addUserService(usersModel)).thenReturn(usersModel);
+	}
+}

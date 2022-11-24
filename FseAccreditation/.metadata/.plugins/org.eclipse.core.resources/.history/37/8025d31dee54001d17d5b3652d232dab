@@ -1,0 +1,5 @@
+package com.shopping.users.controller;
+
+public class UsersControllerTests {
+
+}

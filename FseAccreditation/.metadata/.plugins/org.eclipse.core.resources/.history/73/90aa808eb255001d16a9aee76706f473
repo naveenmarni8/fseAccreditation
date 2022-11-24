@@ -1,0 +1,51 @@
+package com.shopping.users;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.shopping.users.model.UsersModel;
+import com.shopping.users.repository.UsersRepository;
+
+@SpringBootTest
+class UsernamePwdAuthenticationProviderTest {
+	
+	@Autowired
+	private UsersRepository usersRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	private UsersModel usersModel;
+	@BeforeEach
+	public void init()
+	{
+		usersModel=UsersModel.builder()
+				   .email("user.in@gmail.com")
+				   .firstName("User")
+		           .lastName("Indian")
+		           .loginId("USER")
+		           .password("1234")
+		           .role("USER")
+		           .build();
+		           
+	}
+	
+	@Test
+	void test_authenticate()
+	{
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=
+				new UsernamePasswordAuthenticationToken("user","password");
+		when(usersRepository.findByEmail(usersModel.getEmail())).thenReturn(Stream.of(usersModel).toList());
+		when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(true);
+	}
+
+}

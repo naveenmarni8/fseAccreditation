@@ -1,0 +1,67 @@
+package com.shopping.users;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import com.shopping.users.model.AuthenticationRequest;
+import com.shopping.users.model.UsersModel;
+import com.shopping.users.repository.UsersRepository;
+
+@Component
+public class UsernamePwdAuthenticationProvider /*implements AuthenticationProvider*/ {
+
+	
+	private UsersRepository usersRepository;
+	private PasswordEncoder passwordEncoder;
+     
+	@Autowired
+	public UsernamePwdAuthenticationProvider(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
+		super();
+		this.usersRepository = usersRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
+
+	//@Override
+	public Authentication authenticate(AuthenticationRequest authentication) throws AuthenticationException {
+		String username = authentication.getUsername();
+		String pwd = authentication.getPassword();
+		Optional<UsersModel> usersModel=Optional.ofNullable(usersRepository.findByEmail(username));
+		List<GrantedAuthority> grantedAuthority=new ArrayList<>();
+		if(usersModel.isPresent())
+		{
+			grantedAuthority.add(new SimpleGrantedAuthority(usersModel.get().getRole()));
+			if(passwordEncoder.matches(pwd, usersModel.get().getPassword()))
+			{
+				return new UsernamePasswordAuthenticationToken(username, pwd, grantedAuthority);
+			}
+			else {
+                throw new BadCredentialsException("Invalid password!");
+            }
+        }
+		else {
+            throw new BadCredentialsException("No user registered with this details!");
+        }
+	}
+	
+	
+
+
+	/*@Override
+	public boolean supports(Class<?> authentication) {
+		return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
+	}*/
+
+}

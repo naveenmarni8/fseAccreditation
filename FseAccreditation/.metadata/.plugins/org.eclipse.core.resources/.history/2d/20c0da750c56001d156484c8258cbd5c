@@ -1,0 +1,5 @@
+package com.shopping.orders;
+
+public class EmbeddedIntegrationTest {
+
+}

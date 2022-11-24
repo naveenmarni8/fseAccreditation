@@ -1,0 +1,11 @@
+package com.shopping.app;
+
+import org.junit.jupiter.api.Test;
+
+class AppServiceApplicationTest {
+	
+	@Test
+	public void main() {
+		AppServiceApplication.main(new String[] {});
+	}
+}
